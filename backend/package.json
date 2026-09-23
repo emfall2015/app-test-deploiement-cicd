@@ -1,0 +1,16 @@
+{
+  "name": "deployment-demo-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Backend volontairement simple et imparfait pour un TP de déploiement et CI/CD",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}

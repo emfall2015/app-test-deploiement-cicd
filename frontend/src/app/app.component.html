@@ -1,0 +1,58 @@
+<main class="page">
+  <section class="card" *ngIf="!user; else dashboard">
+    <p class="eyebrow">Déploiement & CI/CD</p>
+    <h1>Connexion</h1>
+    <p class="muted">Application de démonstration volontairement simple.</p>
+
+    <form (ngSubmit)="login()">
+      <label>
+        Identifiant
+        <input name="username" [(ngModel)]="username" autocomplete="username">
+      </label>
+
+      <label>
+        Mot de passe
+        <input name="password" [(ngModel)]="password" type="password" autocomplete="current-password">
+      </label>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion…' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+    <div class="hint">
+      Démo : <code>alice</code> / <code>password</code>
+    </div>
+  </section>
+
+  <ng-template #dashboard>
+    <section class="card wide">
+      <div class="topbar">
+        <div>
+          <p class="eyebrow">Session ouverte</p>
+          <h1>Bonjour {{ user?.displayName }}</h1>
+          <p class="muted">{{ user?.username }} — rôle : {{ user?.role }}</p>
+        </div>
+        <button class="secondary" type="button" (click)="logout()">Déconnexion</button>
+      </div>
+
+      <div class="info" *ngIf="info; else loadingInfo">
+        <h2>Information fournie par l'API</h2>
+        <dl>
+          <div><dt>Formation</dt><dd>{{ info.course }}</dd></div>
+          <div><dt>Message</dt><dd>{{ info.message }}</dd></div>
+          <div><dt>Version</dt><dd>{{ info.version }}</dd></div>
+          <div><dt>Réponse reçue</dt><dd>{{ info.servedAt }}</dd></div>
+        </dl>
+      </div>
+
+      <ng-template #loadingInfo>
+        <p class="muted">Chargement des informations du backend…</p>
+      </ng-template>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </section>
+  </ng-template>
+</main>
