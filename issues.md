@@ -1,4 +1,5 @@
 Un avertissement à l'installation du frontend :
+
 ```bash
 npm warn install-scripts 4 packages had install scripts blocked because they are not covered by allowScripts:
 npm warn install-scripts   @parcel/watcher@2.6.0 (install: node scripts/build-from-source.js)
