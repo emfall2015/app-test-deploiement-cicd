@@ -1,10 +1,15 @@
+require("dotenv").config();
+
 const express = require('express');
 const cors = require('cors');
 const users = require('./data/users.json');
 const { getTrainingInfo } = require('./services/info.service');
 
 const app = express();
-const PORT = 3000;
+//const PORT = 3000;
+
+
+const PORT = process.env.PORT;
 
 // Volontairement permissif pour l'exercice.
 app.use(cors());
