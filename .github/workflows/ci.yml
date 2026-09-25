@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  
   lancer-avec-docker:
     runs-on: ubuntu-latest
     steps:
@@ -21,14 +22,10 @@ jobs:
           cat backend/.env
 
       - name: 3. Compilation de l'image frontend
-        run: |
-          cd ./app-test-deploiement-cicd/frontend &&
-          docker build -t svetlanna9/deploiement-cicd:frontend .
+        run: docker build -t svetlanna9/deploiement-cicd:frontend ./frontend
       
       - name: 3'. Compilation de l'image backend
-        run: |
-          cd ./app-test-deploiement-cicd/backend &&
-          docker build -t svetlanna9/deploiement-cicd:backend .
+        run: docker build -t svetlanna9/deploiement-cicd:backend ./backend
 
       - name: 3". Connexion à DockerHub
         uses: docker/login-action@v4
@@ -38,18 +35,11 @@ jobs:
 
       - name: 3*. Envoi des images vers DOckerHub
         run: |
-          cd ./app-test-deploiement-cicd/frontend &&
-          docker push svetlanna9/deploiement-cicd:frontend &&
-          cd ../backend &&
+          docker push svetlanna9/deploiement-cicd:frontend
           docker push svetlanna9/deploiement-cicd:backend
 
-      - name: 4. Attendre que l'app réponde
-        run: |
-          for i in $(seq 1 20); do
-            curl -s http://backend:3000/api/health && exit 0
-            sleep 1
-          done
-          echo "L'app ne répond pas" && exit 1
+      - name: 4. Lancer les tests du backend dans l'image du conteneur
+        run: docker run --rm svetlanna9/app-test-deploiement-cicd:backend npm test
 
       - name: 5. Tester le backend
         run: |
