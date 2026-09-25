@@ -1,41 +1,32 @@
-# Nom du workflow
-name: CD - Pipeline
+name: MALICK - CD - Déploiement
 
-# Déclenchement du déploiement
+run-name: ${{ github.actor }} - CD
+
 on:
- # Le déploiement se déclenche après un push sur dev et un pull request vers dev
   push:
     branches:
-      - dev
+      - malick
 
-  pull_request:
-    branches:
-      - dev
-# Définition du job de déploiement
+  workflow_dispatch:
+
 jobs:
   deploy:
-
-    # Machine temporaire utilisée par GitHub Actions
     runs-on: ubuntu-latest
 
     steps:
 
-      # Récupère le code du dépôt GitHub
-      - name: Récupérer le code
-        uses: actions/checkout@v4
-
-      # Se connecte à la VM Azure en SSH avec un mot de passe
+      # Se connecter à la VM Azure
       - name: Déployer sur la VM Azure
         uses: appleboy/ssh-action@v1
         with:
 
-          # Adresse IP publique de la VM
+          # IP publique de la VM
           host: ${{ vars.VM_HOST }}
 
-          # Utilisateur SSH de la VM
+          # Utilisateur SSH
           username: ${{ vars.VM_USER }}
 
-          # Mot de passe SSH de la VM
+          # Mot de passe SSH
           password: ${{ secrets.VM_PASSWORD }}
 
           # Commandes exécutées sur la VM
@@ -44,14 +35,11 @@ jobs:
             # Aller dans le dossier du projet
             cd /home/groupe1/app-test-deploiement-cicd
 
-            # Récupérer la dernière version de la branche dev
-            git pull origin dev
+            # Télécharger les nouvelles images depuis Docker Hub
+            docker compose pull
 
-            # Reconstruire les images Docker
-            docker compose build
-
-            # Redémarrer les conteneurs
+            # Redémarrer les conteneurs avec les nouvelles images
             docker compose up -d
 
-            # Afficher l'état des conteneurs
+            # Vérifier l'état des conteneurs
             docker compose ps
