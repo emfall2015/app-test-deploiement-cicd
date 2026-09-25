@@ -1,0 +1,73 @@
+name: CI - Lancer le projet
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lancer-avec-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: 2. Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 3. Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: 4. Vérifier la syntaxe de app.py
+        run: python -m py_compile app.py
+
+      - name: 5. Lancer l'application
+        run: |
+          gunicorn --bind 0.0.0.0:8000 app:app > app.log 2>&1 &
+          for i in $(seq 1 15); do
+            curl -s http://localhost:8000/api/health && break
+            sleep 1
+          done
+
+      - name: 6. Tester l'API
+        run: |
+          curl --fail http://localhost:8000/api/health
+          curl --fail http://localhost:8000/api/regions
+          curl --fail http://localhost:8000/api/cards
+          curl --fail http://localhost:8000/
+
+      - name: 7. Afficher les logs de l'app
+        if: always()
+        run: cat app.log
+
+  lancer-avec-docker:
+    needs: lancer-avec-python
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: 2. Construire et lancer avec Docker Compose
+        run: docker compose up -d --build
+
+      - name: 3. Attendre que l'app réponde
+        run: |
+          for i in $(seq 1 20); do
+            curl -s http://localhost:5000/api/health && exit 0
+            sleep 1
+          done
+          echo "L'app ne répond pas" && exit 1
+
+      - name: 4. Tester l'API dans le conteneur
+        run: |
+          curl --fail http://localhost:5000/api/health
+          curl --fail http://localhost:5000/api/cards
+
+      - name: 5. Afficher les logs du conteneur
+        if: always()
+        run: docker compose logs
+
+      - name: 6. Arrêter le conteneur
+        if: always()
+        run: docker compose down
