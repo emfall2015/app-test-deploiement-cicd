@@ -6,7 +6,6 @@ on:
 
 jobs:
   lancer-avec-docker:
-    needs: lancer-avec-python
     runs-on: ubuntu-latest
     steps:
       - name: 1. Récupérer le code
