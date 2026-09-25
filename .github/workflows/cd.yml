@@ -28,12 +28,8 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
 
-          # Adresse IP publique de la VM
-          host: ${{ secrets.VM_HOST }}
-
-          # Utilisateur SSH de la VM
-          username: ${{ secrets.VM_USER }}
-          #mot de passe
+          host: ${{ vars.VM_HOST }}
+          username: ${{ vars.VM_USER }}
           password: ${{ secrets.VM_PASSWORD }}
 
           # Commandes exécutées sur la VM
