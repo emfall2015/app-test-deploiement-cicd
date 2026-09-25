@@ -3,6 +3,8 @@ run-name: ${{ github.actor }} Lancer le projet
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
