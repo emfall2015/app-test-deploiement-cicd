@@ -5,7 +5,7 @@ run-name: ${{ github.actor }} - CD
 on:
   push:
     branches:
-      - main
+      - dev
 
   workflow_dispatch:
 
