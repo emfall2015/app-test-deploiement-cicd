@@ -17,7 +17,7 @@ jobs:
       - name: 3. Attendre que l'app réponde
         run: |
           for i in $(seq 1 20); do
-            curl -s http://localhost:5000/api/health && exit 0
+            curl -s http://localhost:3000/api/health && exit 0
             sleep 1
           done
           echo "L'app ne répond pas" && exit 1
