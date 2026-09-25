@@ -1,0 +1,57 @@
+# Nom du workflow
+name: CD
+
+# Déclenchement du déploiement
+on:
+
+  # Le déploiement se déclenche après un push sur main
+  push:
+    branches:
+      - main
+
+
+# Définition du job de déploiement
+jobs:
+
+  deploy:
+
+    # Machine temporaire utilisée par GitHub Actions
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Récupère le code du dépôt GitHub
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      # Se connecte à la VM Azure en SSH
+      - name: Déployer sur la VM Azure
+        uses: appleboy/ssh-action@v1
+        with:
+
+          # Adresse IP publique de la VM
+          host: ${{ secrets.VM_HOST }}
+
+          # Utilisateur SSH de la VM
+          username: ${{ secrets.VM_USER }}
+
+          # Clé privée SSH
+          key: ${{ secrets.VM_SSH_KEY }}
+
+          # Commandes exécutées sur la VM
+          script: |
+
+            # Aller dans le dossier du projet
+            cd /home/groupe1/app-test-deploiement-cicd
+
+            # Récupérer la dernière version du code
+            git pull origin main
+
+            # Reconstruire les images Docker
+            docker compose build
+
+            # Redémarrer les conteneurs
+            docker compose up -d
+
+            # Afficher l'état des conteneurs
+            docker compose ps
