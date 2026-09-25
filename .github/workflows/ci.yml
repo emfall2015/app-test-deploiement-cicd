@@ -1,0 +1,45 @@
+name: CI - Lancer le projet
+run-name: ${{ github.actor }} Lancer le projet
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lancer-avec-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: 2. Créer le fichier .env
+        run: |
+          echo "PORT=3000" > backend/.env
+          cat backend/.env
+
+      - name: 3. Construire et lancer avec Docker Compose
+        run: docker compose up -d --build
+
+      - name: 4. Attendre que l'app réponde
+        run: |
+          for i in $(seq 1 20); do
+            curl -s http://localhost:3000/api/health && exit 0
+            sleep 1
+          done
+          echo "L'app ne répond pas" && exit 1
+
+      - name: 5. Tester le backend
+        run: |
+          curl --fail http://localhost:3000/api/health
+          curl --fail http://localhost:3000/api/info
+
+      - name: 6. Tester le frontend
+        run: curl --fail http://localhost:4200/
+
+      - name: 7. Afficher les logs du conteneur
+        if: always()
+        run: docker compose logs
+
+      - name: 8. Arrêter le conteneur
+        if: always()
+        run: docker compose down
