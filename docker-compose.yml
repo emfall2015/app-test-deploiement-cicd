@@ -5,6 +5,8 @@ services:
     container_name: deploiement-backend
     ports:
       - "3000:3000"
+    networks:
+      - appnet
 
   frontend:
     build:
@@ -14,4 +16,7 @@ services:
       - "4200:80"
     depends_on:
       - backend
-
+    networks:
+      - appnet
+networks:
+  appnet:
