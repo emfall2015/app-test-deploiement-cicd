@@ -62,5 +62,5 @@ jobs:
             docker image prune -f
             docker compose -f docker-compose.prod.yml ps
             sleep 20
-            curl --fail http://localhost:3000/api/health
-            curl --fail http://localhost:4200/
+            curl --fail http://deploiement-backend:3000/api/health
+            curl --fail http://deploiement-frontend:4200/
