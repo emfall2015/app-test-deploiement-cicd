@@ -1,47 +1,81 @@
 name: CI - Lancer le projet
+
 run-name: ${{ github.actor }} Lancer le projet
 
 on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 jobs:
   lancer-avec-docker:
     runs-on: ubuntu-latest
+
     steps:
+
+      # 1. Récupérer le code
       - name: 1. Récupérer le code
         uses: actions/checkout@v4
 
+      # 2. Créer le fichier .env
       - name: 2. Créer le fichier .env
         run: |
           echo "PORT=3000" > backend/.env
-          cat backend/.env
 
+      # 3. Construire et lancer les conteneurs
       - name: 3. Construire et lancer avec Docker Compose
         run: docker compose up -d --build
 
-      - name: 4. Attendre que l'app réponde
+      # 4. Vérifier l'état des conteneurs
+      - name: 4. Vérifier les conteneurs
         run: |
-          for i in $(seq 1 20); do
-            curl -s http://localhost:3000/api/health && exit 0
+          docker compose ps
+
+      # 5. Afficher les logs du backend
+      - name: 5. Afficher les logs du backend
+        run: |
+          docker compose logs backend
+
+      # 6. Attendre que le backend réponde
+      - name: 6. Attendre que le backend réponde
+        run: |
+          for i in $(seq 1 30); do
+
+            echo "Tentative $i/30..."
+
+            if curl -f http://localhost:3000/api/health; then
+              echo "Backend disponible !"
+              exit 0
+            fi
+
             sleep 1
           done
-          echo "L'app ne répond pas" && exit 1
 
-      - name: 5. Tester le backend
+          echo "Le backend ne répond pas."
+          echo "===== LOGS BACKEND ====="
+          docker compose logs backend
+
+          exit 1
+
+      # 7. Tester le backend
+      - name: 7. Tester le backend
         run: |
           curl --fail http://localhost:3000/api/health
           curl --fail http://localhost:3000/api/info
 
-      - name: 6. Tester le frontend
-        run: curl --fail http://localhost:4200/
+      # 8. Tester le frontend
+      - name: 8. Tester le frontend
+        run: |
+          curl --fail http://localhost:4200/
 
-      - name: 7. Afficher les logs du conteneur
+      # 9. Afficher les logs
+      - name: 9. Afficher les logs des conteneurs
         if: always()
         run: docker compose logs
 
-      - name: 8. Arrêter le conteneur
+      # 10. Arrêter les conteneurs
+      - name: 10. Arrêter les conteneurs
         if: always()
         run: docker compose down
