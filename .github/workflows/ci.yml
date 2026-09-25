@@ -1,46 +1,107 @@
-name: CI - Lancer le projet
-run-name: ${{ github.actor }} Lancer le projet
+name: MALICK - CI - Build et Push Docker
+
+run-name: ${{ github.actor }} - CI
 
 on:
   push:
-    branches: [dev, main]
+    branches:
+      - main
+
   pull_request:
-    branches: [main,dev]
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:
-  lancer-avec-docker:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
+
+      # 1. Récupérer le code
       - name: 1. Récupérer le code
         uses: actions/checkout@v4
 
+      # 2. Créer le fichier .env du backend
       - name: 2. Créer le fichier .env
-        run: echo "PORT=3000" > backend/.env
-
-      - name: 3. Construire et lancer avec Docker Compose
-        run: docker compose build
-
-      - name: 4. Attendre que l'app réponde
         run: |
-          for i in $(seq 1 20); do
-            curl -s http://deploiement-backend:3000/api/health && exit 0
+          echo "PORT=3000" > backend/.env
+
+      # 3. Se connecter à Docker Hub
+      - name: 3. Connexion à Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Construire l'image backend
+      - name: 4. Construire le backend
+        run: |
+          docker build \
+            -t /deploiement-backend:latestemfall \
+            ./backend
+
+      # 5. Construire l'image frontend
+      - name: 5. Construire le frontend
+        run: |
+          docker build \
+            -t emfall/deploiement-frontend:latest \
+            ./frontend
+
+      # 6. Lancer les conteneurs pour tester
+      - name: 6. Lancer les conteneurs
+        run: docker compose up -d
+
+      # 7. Vérifier l'état des conteneurs
+      - name: 7. Vérifier les conteneurs
+        run: docker compose ps
+
+      # 8. Attendre que le backend réponde
+      - name: 8. Tester le backend
+        run: |
+          for i in $(seq 1 30); do
+            if curl -f http://localhost:3000/api/health; then
+              echo "Backend disponible !"
+              exit 0
+            fi
+
             sleep 1
           done
-          echo "L'app ne répond pas" && exit 1
 
-      - name: 5. Tester le backend
+          echo "Le backend ne répond pas"
+          docker compose logs backend
+          exit 1
+
+      # 9. Tester l'API
+      - name: 9. Tester les endpoints
         run: |
-          curl --fail http://deploiement-backend:3000/api/health
-          curl --fail http://deploiement-backend:3000/api/info
+          curl --fail http://localhost:3000/api/health
+          curl --fail http://localhost:3000/api/info
 
-      - name: 6. Tester le frontend
-        run: curl --fail http://deploiement-frontend:4200/
+      # 10. Tester le frontend
+      - name: 10. Tester le frontend
+        run: |
+          curl --fail http://localhost:4200/
 
-      - name: 7. Afficher les logs
+      # 11. Afficher les logs en cas de problème
+      - name: 11. Afficher les logs
         if: always()
         run: docker compose logs
 
-      - name: 8. Arrêter les conteneurs
+      # 12. Arrêter les conteneurs
+      - name: 12. Arrêter les conteneurs
         if: always()
         run: docker compose down
+
+      # 13. Envoyer le backend sur Docker Hub
+      - name: 13. Push backend
+        if: success()
+        run: |
+          docker push emfall/deploiement-backend:latest
+
+      # 14. Envoyer le frontend sur Docker Hub
+      - name: 14. Push frontend
+        if: success()
+        run: |
+          docker push emfall/deploiement-frontend:latest
