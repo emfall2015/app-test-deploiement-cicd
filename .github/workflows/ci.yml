@@ -1,5 +1,5 @@
 name: CI - Lancer le projet
-
+run-name: ${{ github.actor }} Lancer le projet
 on:
   push:
   workflow_dispatch:
