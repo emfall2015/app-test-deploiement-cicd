@@ -7,7 +7,7 @@ on:
   # Le déploiement se déclenche après un push sur main
   push:
     branches:
-      - main
+      - dev
 
 
 # Définition du job de déploiement
