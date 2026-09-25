@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # Récupère le code du dépôt GitHub
       - name: Récupérer le code
         uses: actions/checkout@v4
