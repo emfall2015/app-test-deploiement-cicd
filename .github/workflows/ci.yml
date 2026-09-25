@@ -39,7 +39,7 @@ jobs:
       - name: 4. Construire le backend
         run: |
           docker build \
-            -t /deploiement-backend:latestemfall \
+            -t emfall/deploiement-backend:latest \
             ./backend
 
       # 5. Construire l'image frontend
