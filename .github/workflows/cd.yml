@@ -1,34 +1,41 @@
 # Nom du workflow
-name: CD
+name: CD - Pipeline
 
 # Déclenchement du déploiement
 on:
-
-  # Le déploiement se déclenche après un push sur main
+ # Le déploiement se déclenche après un push sur dev et un pull request vers dev
   push:
     branches:
       - dev
 
-
+  pull_request:
+    branches:
+      - dev
 # Définition du job de déploiement
 jobs:
-
   deploy:
 
     # Machine temporaire utilisée par GitHub Actions
     runs-on: ubuntu-latest
 
     steps:
+
       # Récupère le code du dépôt GitHub
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      # Se connecte à la VM Azure en SSH
+      # Se connecte à la VM Azure en SSH avec un mot de passe
       - name: Déployer sur la VM Azure
         uses: appleboy/ssh-action@v1
         with:
+
+          # Adresse IP publique de la VM
           host: ${{ vars.VM_HOST }}
+
+          # Utilisateur SSH de la VM
           username: ${{ vars.VM_USER }}
+
+          # Mot de passe SSH de la VM
           password: ${{ secrets.VM_PASSWORD }}
 
           # Commandes exécutées sur la VM
@@ -37,8 +44,8 @@ jobs:
             # Aller dans le dossier du projet
             cd /home/groupe1/app-test-deploiement-cicd
 
-            # Récupérer la dernière version du code
-            git pull origin main
+            # Récupérer la dernière version de la branche dev
+            git pull origin dev
 
             # Reconstruire les images Docker
             docker compose build
