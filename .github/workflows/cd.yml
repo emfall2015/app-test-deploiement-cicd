@@ -33,9 +33,8 @@ jobs:
 
           # Utilisateur SSH de la VM
           username: ${{ secrets.VM_USER }}
-
-          # Clé privée SSH
-          key: ${{ secrets.VM_SSH_KEY }}
+          #mot de passe
+          password: ${{ secrets.VM_PASSWORD }}
 
           # Commandes exécutées sur la VM
           script: |
