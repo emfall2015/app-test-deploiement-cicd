@@ -31,11 +31,11 @@ jobs:
 
       - name: 5. Tester le backend
         run: |
-          curl --fail http://localhost:3000/api/health
-          curl --fail http://localhost:3000/api/info
+          curl --fail http://deploiement-backend:3000/api/health
+          curl --fail http://deploiement-backend:3000/api/info
 
       - name: 6. Tester le frontend
-        run: curl --fail http://localhost:4200/
+        run: curl --fail http://deploiement-frontend:4200/
 
       - name: 7. Afficher les logs
         if: always()
