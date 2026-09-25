@@ -24,8 +24,8 @@ jobs:
 
       - name: 4. Tester l'API dans le conteneur
         run: |
-          curl --fail http://localhost:5000/api/health
-          curl --fail http://localhost:5000/api/cards
+          curl --fail http://localhost:3000/api/health
+          curl --fail http://localhost:3000/api/cards
 
       - name: 5. Afficher les logs du conteneur
         if: always()
