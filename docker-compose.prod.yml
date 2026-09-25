@@ -1,4 +1,4 @@
-#utilisé par la VM Azure, on TÉLÉCHARGE les images depuis Docker Hub
+#utilisé par la VM Azure : on TÉLÉCHARGE les images depuis Docker Hub
 services:
   backend:
     image: svetlanna9/deploiement-cicd:backend

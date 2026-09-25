@@ -19,7 +19,7 @@ jobs:
         run: echo "PORT=3000" > backend/.env
 
       - name: 3. Construire et lancer avec Docker Compose
-        run: docker compose --build
+        run: docker compose build
 
       - name: 4. Attendre que l'app réponde
         run: |
