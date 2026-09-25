@@ -5,11 +5,11 @@ run-name: ${{ github.actor }} - CI
 on:
   push:
     branches:
-      - malick
+      - main
 
   pull_request:
     branches:
-      - malick
+      - main
 
   workflow_dispatch:
 
@@ -39,7 +39,7 @@ jobs:
       - name: 4. Construire le backend
         run: |
           docker build \
-            -t emfall/deploiement-backend:latest \
+            -t /deploiement-backend:latestemfall \
             ./backend
 
       # 5. Construire l'image frontend
