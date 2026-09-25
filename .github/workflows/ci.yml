@@ -42,7 +42,6 @@ jobs:
           docker push svetlanna9/deploiement-cicd:frontend &&
           cd ../backend &&
           docker push svetlanna9/deploiement-cicd:backend
-        run: echo "PORT=3000" > backend/.env
 
       - name: 4. Attendre que l'app réponde
         run: |
