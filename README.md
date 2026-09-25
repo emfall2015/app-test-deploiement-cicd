@@ -1,8 +1,6 @@
 # Application de démonstration — Déploiement & CI/CD
 
-Petite application volontairement imparfaite utilisée comme support pédagogique.
-
-Elle contient :
+L'application à déployer contient :
 
 - un frontend Angular ;
 - un backend Node.js / Express ;
@@ -13,10 +11,14 @@ Elle contient :
 
 > Cette application est destinée à un exercice de formation. Elle n'est pas conçue pour être sécurisée ni utilisée en production.
 
-## Prérequis
+## Lancement de l'application localement
 
-- Node.js 22 ou 24 recommandé
-- npm
+L'application se lance avec docker compose :
+
+```bash
+cd <repertoire_du_projet>
+docker compose up -d --build
+```
 
 ## Démarrer le backend
 
