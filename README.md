@@ -33,3 +33,27 @@ Le frontend écoute sur : `http://localhost:4200`
 
 ## Déploiement sur VM Azure
 
+A chaque push sur la branche main les étapes suivantes sont effctuées
+
+# ci.yaml
+
+- Récupérer le code
+- connexion à Githus Actions
+- Créer le fichier .env du backend
+- Se connecter à Docker Hub
+- Construire l'image backend
+- Construire l'image frontend
+- Lancer les conteneurs
+- Tester si le Frontend et le backend répondent
+- Ecrire sur les logs en cas d'erreurs
+- Pusher les images construites sur DockerHub
+
+# cd.yaml
+
+- Se connecter à la VM Azure par ssh avec un utilisateur et mot de passe
+- Aller dans le dossier du projet 
+- Télécharger les nouvelles images depuis Docker Hub
+- Redémarrer les conteneurs avec les nouvelles images
+- Vérifier l'état des conteneurs
+
+ 
