@@ -6,6 +6,11 @@ services:
       - "3000:3000"
     networks:
       - appnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     image: emfall/deploiement-frontend:latest
