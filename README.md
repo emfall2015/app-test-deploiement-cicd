@@ -32,3 +32,4 @@ Le frontend écoute sur : `http://localhost:4200`
 - `admin` / `admin`
 
 ## Déploiement sur VM Azure
+
