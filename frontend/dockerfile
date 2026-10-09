@@ -3,7 +3,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+#RUN npm run build
+# Build avec environment.prod.ts
+RUN npm run build -- --configuration production
 FROM nginx:alpine
 COPY --from=build /app/dist/deployment-demo-frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
